@@ -47,32 +47,30 @@ def assembly_to_machine_code(x):
                             "":"1110" #unconditional
                             }
     if (is_data_instruction):
-        for i in memory_instruction: # load or store inst with postive offset mode + postive extended immediate
-            if i in x[0]:
-                cmd = i
-                cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
-                op = "01"
-                base_reg = bin(int(x[2][1]))[2:].zfill(4)
-                destination_source_reg = bin(int(x[1][1]))[2:].zfill(4)
-                offset = bin(int(x[-1][1]))[2:].zfill(12)
-                return (condition_dict[cond] + op + str(int(not i_bit)) + "1100" +
-                 memory_instruction[cmd] + base_reg + destination_source_reg + offset)
+
+        cmd = x[0][:3]
+        cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
+        op = "01"
+        base_reg = bin(int(x[2][1]))[2:].zfill(4)
+        destination_source_reg = bin(int(x[1][1]))[2:].zfill(4)
+        offset = bin(int(x[-1][1]))[2:].zfill(12)
+        return (condition_dict[cond] + op + str(int(not i_bit)) + "1100" +
+            memory_instruction[cmd] + base_reg + destination_source_reg + offset)
     else:
-        for i in data_processing:
-            if i in x[0]:
-                cmd = i
-                cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
-                op = "00"
-                
-                destination_reg = bin(int(x[1][1]))[2:].zfill(4)
-                second_source = bin(int(x[-1][1]))[2:].zfill(12) 
-                if cmd != "mov":
-                    first_source_reg = bin(int(x[2][1]))[2:].zfill(4)
-                else:
-                    first_source_reg = "0000" #mov instruction handeling
-                
-                return (condition_dict[cond] + op + str(i_bit) + data_processing[cmd] + str(s_bit)  + first_source_reg + destination_reg + second_source)
-            
+
+        cmd = x[0][:3]
+        cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
+        op = "00"
+        
+        destination_reg = bin(int(x[1][1]))[2:].zfill(4)
+        second_source = bin(int(x[-1][1]))[2:].zfill(12) 
+        if cmd != "mov":
+            first_source_reg = bin(int(x[2][1]))[2:].zfill(4)
+        else:
+            first_source_reg = "0000" #mov instruction handeling
+        
+        return (condition_dict[cond] + op + str(i_bit) + data_processing[cmd] + str(s_bit)  + first_source_reg + destination_reg + second_source)
+
     
 x = input('Enter an assembly code: ')
 print(assembly_to_machine_code(x))
