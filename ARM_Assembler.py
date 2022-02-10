@@ -1,7 +1,3 @@
-
-from email.mime import base
-
-
 def findded(string, sub, start=0):
     y = string.find(sub,start)
     if y == -1:
@@ -71,6 +67,17 @@ def assembly_to_machine_code(x):
         
         return (condition_dict[cond] + op + str(i_bit) + data_processing[cmd] + str(s_bit)  + first_source_reg + destination_reg + second_source)
 
-    
-x = input('Enter an assembly code: ')
-print(assembly_to_machine_code(x))
+def assembly_to_machine_file(assembly_code_file_path, machine_code_file_path):    
+    assembly_file = open(assembly_code_file_path, 'r')
+    machine_file = open(machine_code_file_path, 'w')
+
+    y = assembly_file.readlines()
+
+    for i in y:
+        machine_file.write(assembly_to_machine_code(i))
+        machine_file.write("\n")
+        
+    assembly_file.close()
+    machine_file.close()
+
+assembly_to_machine_file('assembly_code.txt','machine_code.txt')

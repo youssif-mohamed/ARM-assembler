@@ -1,0 +1,5 @@
+Add r0, r2, #4
+orr R1, R5, R10
+LDR r1, [r0, #20]
+LDR r5, [r7, #20]
+str r3, [r0, #20]
