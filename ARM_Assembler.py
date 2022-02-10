@@ -17,8 +17,9 @@ def assembly_to_machine_code(x):
     # extract s_bit and i_bit from the assembly code
     s_bit = findded(x[0], "s", 3)
     i_bit = int(not findded(x[-1], "r"))
+    l_bit = int(x[0][0]=='b' and findded(x[0],'l'))
     #print(f"s bit is: {s_bit} and i bit is: {i_bit}")
-
+    #print(f"l bit is:  {l_bit}")
 
 
     # Dictionary of data processing instructions
@@ -42,7 +43,12 @@ def assembly_to_machine_code(x):
                             "le":"1101", "al":"1110",
                             "":"1110" #unconditional
                             }
-    if (is_data_instruction):
+    if (x[0][0] == 'b'):
+        op = '10'
+        cond = x[0][2:] if (l_bit) else x[0][1:]
+        return condition_dict[cond] + op + '1' + str(l_bit) + bin(int(x[1][1]) - 1)[2:].zfill(24)
+        
+    elif (is_data_instruction):
 
         cmd = x[0][:3]
         cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
