@@ -1,5 +1,6 @@
-Add r0, r2, #4
-orr R1, R5, R10
-LDR r1, [r0, #20]
-LDR r5, [r7, #20]
-str r3, [r0, #20]
+Blne #4
+Add R0, R1, R2
+SUB R0, R0, #8
+And R4, R5, R3
+mov R0, #1
+SUB R0, R0, #1
