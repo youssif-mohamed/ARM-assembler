@@ -6,15 +6,25 @@ def findded(string, sub, start=0):
         return 1
 
 def assembly_to_machine_code(x):
-    # take the input then filter it
+    """
+    This function converts an assebly code to 32-bits machine code.
+
+    input: string containing the assebly code.
+
+    return: string containing the 32-bits machine code.
+    """
+    
+    # check if the assemby code is a data istruction
     is_data_instruction = findded(x,"[")
+    
+    # take the input and pasre it to a list of strings
     x = x.lower().strip().split(",")
     x = x[0].split() + x[1:]
     for i in range(0, len(x)):
         x[i] = x[i].strip().strip("[]")
     
 
-    # extract s_bit and i_bit from the assembly code
+    # extract s_bit, i_bit abd l_bit from the assembly code
     s_bit = findded(x[0], "s", 3)
     i_bit = int(not findded(x[-1], "r"))
     l_bit = int(x[0][0]=='b' and findded(x[0],'l'))
@@ -31,8 +41,11 @@ def assembly_to_machine_code(x):
         "cmp":"1010", "cmn":"1011",
         "orr":"1100", "mov":"1101"
         }
+    
+    # Dictionary of memory instructions
     memory_instruction = {"ldr":"1", "str":"0"}
-
+    
+    # Dictionary of conditional excutions
     condition_dict = {"eq":"0000", "ne":"0001",
                             "cs":"0010", "hs":"0010",
                             "cc":"0011", "lo":"0011",
@@ -43,7 +56,7 @@ def assembly_to_machine_code(x):
                             "le":"1101", "al":"1110",
                             "":"1110" #unconditional
                             }
-    if (x[0][0] == 'b'):
+    if (x[0][0] == 'b'):# checking for branch instruction and returns its machine code.
         op = '10'
         cond = x[0][2:] if (l_bit) else x[0][1:]
         return condition_dict[cond] + op + '1' + str(l_bit) + bin(int(x[1][1]) - 1)[2:].zfill(24)
@@ -58,7 +71,7 @@ def assembly_to_machine_code(x):
         offset = bin(int(x[-1][1]))[2:].zfill(12)
         return (condition_dict[cond] + op + str(int(not i_bit)) + "1100" +
             memory_instruction[cmd] + base_reg + destination_source_reg + offset)
-    else:
+    else:# Data processing instructions
 
         cmd = x[0][:3]
         cond = x[0][len(cmd)+1:] if (s_bit) else x[0][len(cmd):]
@@ -74,6 +87,10 @@ def assembly_to_machine_code(x):
         return (condition_dict[cond] + op + str(i_bit) + data_processing[cmd] + str(s_bit)  + first_source_reg + destination_reg + second_source)
 
 def assembly_to_machine_file(assembly_code_file_path, machine_code_file_path):    
+    """
+    Reads a txt file containing multiple lines of ARM assembly code and returns a txt file containing 
+    crossponding 32-bits machine code lines.
+    """
     assembly_file = open(assembly_code_file_path, 'r')
     machine_file = open(machine_code_file_path, 'w')
 
@@ -85,5 +102,6 @@ def assembly_to_machine_file(assembly_code_file_path, machine_code_file_path):
         
     assembly_file.close()
     machine_file.close()
-
+    
+# calling the function
 assembly_to_machine_file('assembly_code.txt','machine_code.txt')
